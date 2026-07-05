@@ -4,26 +4,26 @@ import { Star, MessageCircle, Heart, ThumbsUp, Sparkles } from 'lucide-react';
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    name: 'Gisele Vasconcelos',
-    role: 'Compradora Recente (Britânia Multipane)',
-    avatarFallback: 'GV',
-    text: 'Eu tinha acabado de comprar a máquina e estava apavorada lendo relatos na internet de pães que davam errado. Decidi arriscar esses R$ 10 antes mesmo de ligar a tomada pela primeira vez. Resultado: meu primeiríssimo pão de leite ficou igualzinho ao de comercial, super macio, inflou certinho e perfumou a casa toda! O método de camadas é genial e evita qualquer erro. Recomendo muito!',
-    tag: 'Comprador Recente',
-    rating: 5
-  },
-  {
-    name: 'Carlos Henrique M.',
-    role: 'Aparelho Resgatado (Mondial Master Bread)',
-    avatarFallback: 'CH',
-    text: 'Minha máquina ficou guardada no armário por quase dois anos. Toda vez que eu olhava para ela, sentia uma culpa terrível por ter desperdiçado dinheiro. Meus pães sempre solavam ou viravam uma pedra dura no dia seguinte. Quando li sobre a diferença das farinhas brasileiras nas receitas traduzidas do manual oficial, tudo fez sentido! Fiz os ajustes do guia e, pela primeira vez, comi um pão de máquina fofinho que durou macio até o terceiro dia. Vale cada centavo!',
+    name: 'Ana P.',
+    role: 'Máquina Resgatada (Curitiba/PR)',
+    avatarFallback: 'AP',
+    text: 'Minha máquina estava encostada porque eu nunca acertava o ponto. Agora só coloco os ingredientes e aperto o botão.',
     tag: 'Máquina Resgatada',
     rating: 5
   },
   {
-    name: 'Regina Célia',
-    role: 'Prática de Cozinha (Philco Easy)',
-    avatarFallback: 'RC',
-    text: 'Eu comprei a máquina só para fazer o trabalho pesado de sovar e adorei as instruções sobre o Ciclo Massa. O guia ensina a ordem perfeita dos ingredientes e o tempo exato para retirar a massa. Agora faço pizza italiana, brioche e pão de hambúrguer de padaria sem dar uma única sovada na mão e sem sujar a pia. Minha cozinha fica limpa e a máquina faz toda a força física para mim!',
+    name: 'Juliana C.',
+    role: 'Compradora Recente (Recife/PE)',
+    avatarFallback: 'JC',
+    text: 'Fiz o pão multigrãos e o de milho e ficaram incríveis. Antes eu tinha medo de errar, agora a máquina faz tudo sozinha.',
+    tag: 'Comprador Recente',
+    rating: 5
+  },
+  {
+    name: 'Cláudia M.',
+    role: 'Prática de Cozinha (São Paulo/SP)',
+    avatarFallback: 'CM',
+    text: 'Fiz o pão australiano na máquina e ficou igual ao de padaria, mas sem trabalho nenhum na cozinha.',
     tag: 'Prático (Ciclo Massa)',
     rating: 5
   }
