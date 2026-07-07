@@ -1,6 +1,6 @@
 {
-  "name": "Guia Prático da Máquina de Pão",
-  "description": "Landing page de vendas de alta conversão para o Guia Prático da Máquina de Pão, com copy persuasiva de resposta direta e mapeamento visual moderno.",
+  "name": "Método Mesa Sem Glúten",
+  "description": "Landing page premium do Método Mesa Sem Glúten, o guia definitivo para pães, pizzas, massas e sobremesas deliciosas totalmente sem glúten.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

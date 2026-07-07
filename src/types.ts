@@ -1,18 +1,36 @@
-export interface DiagnosticProblem {
-  id: string;
-  label: string;
+export interface WeekDayItem {
+  day: string;
+  title: string;
   description: string;
-  cause: string;
-  solutionPage: string;
-  advice: string;
+  imageUrl: string;
+  tag: string;
 }
 
-export interface Testimonial {
+export interface MenuItem {
+  category: string;
+  title: string;
+  imageUrl: string;
+  items: string[];
+  icon: string;
+}
+
+export interface TestimonialItem {
+  id: string;
   name: string;
   role: string;
-  avatarUrl?: string;
-  avatarFallback: string;
-  text: string;
-  tag: 'Comprador Recente' | 'Máquina Resgatada' | 'Prático (Ciclo Massa)';
   rating: number;
+  image: string;
+  text: string;
+  tag: string;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface FeatureCardItem {
+  title: string;
+  description: string;
+  icon: string;
 }

@@ -1,509 +1,334 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Lock, 
-  CreditCard, 
-  QrCode, 
-  ShieldCheck, 
-  Check, 
-  Sparkles, 
-  Copy, 
-  ArrowRight, 
-  Download, 
-  FileText 
-} from 'lucide-react';
+import { useState, FormEvent } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { X, ShieldCheck, Lock, CreditCard, Sparkles, CheckCircle2, QrCode, Clipboard } from "lucide-react";
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mockupImg: string;
-  selectedTier?: 'basic' | 'complete';
+  planName: string;
+  price: number;
 }
 
-export default function CheckoutModal({ isOpen, onClose, mockupImg, selectedTier = 'basic' }: CheckoutModalProps) {
-  const [step, setStep] = useState<1 | 2 | 3>(1); // 1: Info, 2: Pay, 3: Success
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
-  const [hasOrderBump, setHasOrderBump] = useState(false);
-  const [pixCopied, setPixCopied] = useState(false);
-  const [cardName, setCardName] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvv, setCardCvv] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+export default function CheckoutModal({ isOpen, onClose, planName, price }: CheckoutModalProps) {
+  const [email, setEmail] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"pix" | "card">("pix");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [copiedPix, setCopiedPix] = useState(false);
 
-  // Reset state on close
-  useEffect(() => {
-    if (!isOpen) {
-      setStep(1);
-      setName('');
-      setEmail('');
-      setPaymentMethod('pix');
-      setHasOrderBump(false);
-      setPixCopied(false);
-      setCardName('');
-      setCardNumber('');
-      setCardExpiry('');
-      setCardCvv('');
-      setIsProcessing(false);
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  const basePrice = selectedTier === 'complete' ? 15.00 : 9.99;
-  const orderBumpPrice = 4.90;
-  const totalPrice = (selectedTier === 'basic' && hasOrderBump) ? basePrice + orderBumpPrice : basePrice;
-
-  const handleInfoSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (name && email) {
-      setStep(2);
-    }
+  const handleCopyPix = () => {
+    navigator.clipboard.writeText("00020101021226830014br.gov.bcb.pix0136ad7051e2-72e5-4474-949c-dd78615a14d4520400005303986540517.005802BR5925METODO MESA SEM GLUTEN6009Sao Paulo62070503***6304FC72");
+    setCopiedPix(true);
+    setTimeout(() => setCopiedPix(false), 2000);
   };
 
-  const handleSimulatePayment = () => {
-    setIsProcessing(true);
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsSubmitting(true);
+    
+    // Simulate premium payment processing gateway
     setTimeout(() => {
-      setIsProcessing(false);
-      setStep(3);
+      setIsSubmitting(false);
+      setIsSuccess(true);
     }, 1500);
   };
 
-  const copyPixCode = () => {
-    setPixCopied(true);
-    navigator.clipboard.writeText('00020101021226870014br.gov.bcb.pix2565mockpix.pagar.guia.maquina.pao.10reais.produtodigital');
-    setTimeout(() => setPixCopied(false), 2000);
-  };
-
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-[#FAF8F5] rounded-2xl w-full max-w-xl shadow-2xl border border-[#ece3d4] overflow-hidden relative">
-        
-        {/* Close Button */}
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 text-amber-900/40 hover:text-amber-950 p-1.5 rounded-full hover:bg-amber-100/50 transition cursor-pointer"
-          aria-label="Fechar"
-          id="close-checkout-modal-btn"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          {/* Backdrop blur */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-[#234233]/70 backdrop-blur-xs"
+          />
 
-        {/* Modal Header */}
-        <div className="bg-[#1e4620] text-white p-6 relative">
-          <div className="flex items-center gap-1.5 text-xs text-emerald-300 font-bold uppercase tracking-wider mb-1">
-            <Lock className="w-3.5 h-3.5" /> Ambiente 100% Seguro & Criptografado
-          </div>
-          <h3 className="font-serif text-xl md:text-2xl font-bold">Checkout Seguro do Guia Prático</h3>
-          <p className="text-xs text-white/70 mt-1">Conclua sua compra para ter acesso instantâneo ao e-book.</p>
-        </div>
+          {/* Modal Container */}
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 15 }}
+            transition={{ type: "spring", duration: 0.5 }}
+            className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl relative z-10 border border-brand-green/10"
+          >
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-brand-text/50 hover:text-brand-text w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
 
-        {/* Checkout Content */}
-        <div className="p-6 md:p-8 space-y-6">
-          
-          {/* Progress Indicator (hidden on success step) */}
-          {step !== 3 && (
-            <div className="flex items-center gap-3 text-xs font-semibold text-amber-900/60 pb-2 border-b border-[#ece3d4]/60">
-              <span className={`px-2 py-0.5 rounded ${step === 1 ? 'bg-amber-100 text-amber-950 font-bold' : 'bg-emerald-100 text-emerald-900'}`}>
-                {step === 1 ? '1. Seus Dados' : '✓ Dados Cadastrados'}
-              </span>
-              <ArrowRight className="w-3 h-3 text-amber-900/30" />
-              <span className={`px-2 py-0.5 rounded ${step === 2 ? 'bg-amber-100 text-amber-950 font-bold' : ''}`}>
-                2. Pagamento (R$ {totalPrice.toFixed(2).replace('.', ',')})
-              </span>
-            </div>
-          )}
-
-          {/* STEP 1: Personal Info Form */}
-          {step === 1 && (
-            <form onSubmit={handleInfoSubmit} className="space-y-5">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-amber-950 uppercase tracking-wider mb-1">Seu Nome Completo</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Maria Silva"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-[#ece3d4] bg-white focus:outline-hidden focus:border-amber-600 text-sm text-[#2c1d11]"
-                    id="checkout-name-input"
-                  />
+            {!isSuccess ? (
+              <form onSubmit={handleSubmit} className="space-y-6 text-left">
+                {/* Header */}
+                <div className="space-y-1.5 pr-8">
+                  <div className="inline-flex items-center gap-1.5 bg-brand-green/10 text-brand-green px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    <Lock className="w-3 h-3" />
+                    Ambiente 100% Seguro
+                  </div>
+                  <h3 className="font-title font-bold text-xl md:text-2xl text-brand-text">
+                    Inicie sua transformação na cozinha
+                  </h3>
+                  <p className="text-xs text-brand-text/60">
+                    Você está adquirindo o <strong className="text-brand-green">{planName}</strong> com acesso vitalício.
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-amber-950 uppercase tracking-wider mb-1">E-mail para Envio do Material</label>
+
+                {/* Selected Plan Details Box */}
+                <div className="bg-brand-bg p-4 rounded-2xl flex justify-between items-center border border-brand-green/10">
+                  <div>
+                    <p className="font-title font-bold text-brand-darkgreen text-sm">{planName}</p>
+                    <p className="text-[10px] text-brand-text/50 font-sans">Acesso imediato via e-mail</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-brand-text/50 uppercase tracking-widest font-bold">Investimento</p>
+                    <p className="font-title font-bold text-lg text-brand-green">R$ {price},00</p>
+                  </div>
+                </div>
+
+                {/* Email input (CRITICAL) */}
+                <div className="space-y-1.5">
+                  <label htmlFor="checkout-email" className="text-xs font-bold text-brand-text/75 uppercase tracking-wider block">
+                    Seu Melhor E-mail (Onde receberá o acesso)
+                  </label>
                   <input
                     type="email"
+                    id="checkout-email"
                     required
-                    placeholder="Ex: mariasilva@email.com"
+                    placeholder="exemplo@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-[#ece3d4] bg-white focus:outline-hidden focus:border-amber-600 text-sm text-[#2c1d11]"
-                    id="checkout-email-input"
+                    className="w-full bg-brand-bg border border-brand-green/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-green transition-colors text-brand-text font-sans"
                   />
-                  <span className="text-[10px] text-amber-900/50 mt-1 block">Importante: É neste e-mail que você receberá o link para baixar o seu e-book imediatamente.</span>
+                  <p className="text-[10px] text-brand-text/50">
+                    Enviaremos seu login, senha e links de download para este e-mail imediatamente.
+                  </p>
                 </div>
-              </div>
 
-              {/* Order Bump Section */}
-              {selectedTier === 'basic' && (
-                <div className="bg-[#FCF8F2] border border-amber-600/30 rounded-xl p-4 space-y-2 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-amber-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl uppercase tracking-wider animate-pulse-subtle">
-                    OFERTA ESPECIAL
-                  </div>
-                  <label className="flex items-start gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={hasOrderBump}
-                      onChange={(e) => setHasOrderBump(e.target.checked)}
-                      className="mt-1 w-4 h-4 rounded border-[#ece3d4] text-amber-700 focus:ring-amber-600"
-                      id="checkout-orderbump-checkbox"
-                    />
-                    <div className="space-y-1">
-                      <p className="text-sm font-bold text-[#2c1d11] flex items-center gap-1">
-                        <Sparkles className="w-4 h-4 text-amber-600" />
-                        Adicionar "O Manual de Geleias e Patês"
-                      </p>
-                      <p className="text-xs text-amber-950/70 leading-relaxed">
-                        Toque final de mestre! 12 receitas secretas de geleias de frutas, patê de ervas e manteigas temperadas projetadas especialmente para casar com pães de máquina fresquinhos. 
-                      </p>
-                      <p className="text-xs font-bold text-emerald-700">
-                        Leve agora por apenas + R$ 4,90 pago uma única vez!
-                      </p>
-                    </div>
+                {/* Payment Methods selector */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-brand-text/75 uppercase tracking-wider block">
+                    Escolha a Forma de Pagamento
                   </label>
-                </div>
-              )}
-
-              {/* Button */}
-              <button
-                type="submit"
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-all transform active:scale-98 flex items-center justify-center gap-2 text-base cursor-pointer"
-                id="checkout-step1-submit-btn"
-              >
-                Prosseguir para o Pagamento <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-          )}
-
-          {/* STEP 2: Payment Simulator */}
-          {step === 2 && (
-            <div className="space-y-6">
-              {/* Payment Methods Selector Tabs */}
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setPaymentMethod('pix')}
-                  className={`py-3 px-4 rounded-xl border font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition ${paymentMethod === 'pix' ? 'border-emerald-600 bg-emerald-50 text-emerald-950' : 'border-[#ece3d4] bg-white text-amber-900/60'}`}
-                  id="pay-method-pix-btn"
-                >
-                  <QrCode className="w-4 h-4 text-emerald-600" /> Pix Instantâneo
-                </button>
-                <button
-                  onClick={() => setPaymentMethod('card')}
-                  className={`py-3 px-4 rounded-xl border font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition ${paymentMethod === 'card' ? 'border-amber-600 bg-amber-50 text-amber-950' : 'border-[#ece3d4] bg-white text-amber-900/60'}`}
-                  id="pay-method-card-btn"
-                >
-                  <CreditCard className="w-4 h-4 text-amber-700" /> Cartão de Crédito
-                </button>
-              </div>
-
-              {/* PIX Option Interface */}
-              {paymentMethod === 'pix' && (
-                <div className="space-y-5 text-center">
-                  <div className="bg-emerald-50/50 rounded-xl p-5 border border-emerald-600/10 space-y-4 flex flex-col items-center">
-                    <p className="text-xs font-bold text-emerald-800 uppercase tracking-widest">Pague via Pix para Liberação Imediata</p>
-                    
-                    {/* Simulated QR Code Graphic */}
-                    <div className="w-36 h-36 bg-white p-2 border border-emerald-600/20 rounded-lg flex items-center justify-center relative shadow-xs">
-                      {/* Fake pixel grids for QR design */}
-                      <div className="grid grid-cols-6 gap-1 w-full h-full opacity-85">
-                        {Array.from({ length: 36 }).map((_, i) => (
-                          <div 
-                            key={i} 
-                            className={`rounded-xs ${((i*7+13)%5 === 0 || i < 6 || i % 6 === 0 || i > 30 || i % 6 === 5) && i !== 14 ? 'bg-[#1e4620]' : 'bg-transparent'}`} 
-                          />
-                        ))}
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-[#FAF8F5] p-1.5 rounded-full border border-[#ece3d4]">
-                          <QrCode className="w-6 h-6 text-[#1e4620]" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-amber-950/70 max-w-sm">
-                      Abra o aplicativo do seu banco, escolha a opção "Pagar com QR Code" e escaneie a imagem acima, ou copie o código Pix abaixo.
-                    </p>
-
-                    {/* Copy Pix button */}
+                  <div className="grid grid-cols-2 gap-3">
                     <button
-                      onClick={copyPixCode}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-amber-50 border border-[#ece3d4] rounded-lg text-xs font-bold text-amber-950 transition cursor-pointer"
-                      id="copy-pix-btn"
+                      type="button"
+                      onClick={() => setPaymentMethod("pix")}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                        paymentMethod === "pix"
+                          ? "border-brand-green bg-brand-green/10 text-brand-green"
+                          : "border-brand-text/10 hover:bg-brand-bg text-brand-text/75"
+                      }`}
                     >
-                      <Copy className="w-3.5 h-3.5 text-amber-700" />
-                      {pixCopied ? 'Código Copiado!' : 'Copiar Chave Copia e Cola'}
+                      <span className="text-base">⚡</span> PIX (Aprovação imediata)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("card")}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                        paymentMethod === "card"
+                          ? "border-brand-green bg-brand-green/10 text-brand-green"
+                          : "border-brand-text/10 hover:bg-brand-bg text-brand-text/75"
+                      }`}
+                    >
+                      <CreditCard className="w-4 h-4" /> Cartão de Crédito
                     </button>
                   </div>
-
-                  {/* Simulator Trigger */}
-                  <div className="pt-2">
-                    <button
-                      onClick={handleSimulatePayment}
-                      disabled={isProcessing}
-                      className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/60 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-base cursor-pointer"
-                      id="simulate-pix-pay-btn"
-                    >
-                      {isProcessing ? (
-                        <span className="flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Confirmando transação no Pix...
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1.5">
-                          Confirmar Pagamento Simulado (R$ {totalPrice.toFixed(2).replace('.', ',')}) <Check className="w-4 h-4" />
-                        </span>
-                      )}
-                    </button>
-                    <p className="text-[10px] text-amber-900/50 mt-1.5">
-                      Ambiente de teste: Este botão simula a notificação instantânea do banco. O e-book será liberado de verdade!
-                    </p>
-                  </div>
                 </div>
-              )}
 
-              {/* Credit Card Option Interface */}
-              {paymentMethod === 'card' && (
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-[10px] font-bold text-amber-950 uppercase tracking-wider mb-0.5">Nome impresso no cartão</label>
+                {/* Payment Fields (Card vs Pix) */}
+                {paymentMethod === "card" ? (
+                  <div className="space-y-3 pt-1">
+                    <div className="space-y-1">
                       <input
                         type="text"
-                        placeholder="Ex: MARIA S SILVA"
-                        value={cardName}
-                        onChange={(e) => setCardName(e.target.value.toUpperCase())}
-                        className="w-full px-3 py-2.5 rounded-lg border border-[#ece3d4] bg-white focus:outline-hidden focus:border-amber-600 text-xs text-[#2c1d11]"
-                        id="cc-name-input"
+                        placeholder="Número do Cartão"
+                        required
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        className="w-full bg-brand-bg border border-brand-green/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green text-brand-text font-sans"
                       />
                     </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-amber-950 uppercase tracking-wider mb-0.5">Número do Cartão</label>
+                    <div className="space-y-1">
                       <input
                         type="text"
-                        placeholder="4444 4444 4444 4444"
-                        value={cardNumber}
-                        maxLength={19}
-                        onChange={(e) => setCardNumber(e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim())}
-                        className="w-full px-3 py-2.5 rounded-lg border border-[#ece3d4] bg-white focus:outline-hidden focus:border-amber-600 text-xs text-[#2c1d11]"
-                        id="cc-number-input"
+                        placeholder="Nome como no Cartão"
+                        required
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                        className="w-full bg-brand-bg border border-brand-green/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green text-brand-text font-sans"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-bold text-amber-950 uppercase tracking-wider mb-0.5">Validade (MM/AA)</label>
-                        <input
-                          type="text"
-                          placeholder="12/30"
-                          maxLength={5}
-                          value={cardExpiry}
-                          onChange={(e) => setCardExpiry(e.target.value)}
-                          className="w-full px-3 py-2.5 rounded-lg border border-[#ece3d4] bg-white focus:outline-hidden focus:border-amber-600 text-xs text-[#2c1d11]"
-                          id="cc-expiry-input"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-amber-950 uppercase tracking-wider mb-0.5">CVV (Código de segurança)</label>
-                        <input
-                          type="password"
-                          placeholder="123"
-                          maxLength={4}
-                          value={cardCvv}
-                          onChange={(e) => setCardCvv(e.target.value)}
-                          className="w-full px-3 py-2.5 rounded-lg border border-[#ece3d4] bg-white focus:outline-hidden focus:border-amber-600 text-xs text-[#2c1d11]"
-                          id="cc-cvv-input"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        placeholder="MM/AA"
+                        required
+                        value={cardExpiry}
+                        onChange={(e) => setCardExpiry(e.target.value)}
+                        className="w-full bg-brand-bg border border-brand-green/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green text-brand-text font-sans text-center"
+                      />
+                      <input
+                        type="password"
+                        placeholder="CVC"
+                        maxLength={4}
+                        required
+                        value={cardCvv}
+                        onChange={(e) => setCardCvv(e.target.value)}
+                        className="w-full bg-brand-bg border border-brand-green/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green text-brand-text font-sans text-center"
+                      />
                     </div>
                   </div>
-
-                  <div className="pt-2">
+                ) : (
+                  <div className="bg-brand-bg p-4 rounded-2xl border border-brand-green/10 text-center space-y-3">
+                    <div className="flex justify-center">
+                      <QrCode className="w-24 h-24 text-brand-green" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-brand-text">Código PIX gerado para cópia:</p>
+                      <p className="text-[9px] text-brand-text/50 font-mono truncate max-w-xs mx-auto">
+                        00020101021226830014br.gov.bcb.pix0136ad7051e2-72e5-4474-949c-dd78615a14d4520400005303986540517.00
+                      </p>
+                    </div>
                     <button
-                      onClick={handleSimulatePayment}
-                      disabled={isProcessing}
-                      className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/60 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-base cursor-pointer"
-                      id="simulate-cc-pay-btn"
+                      type="button"
+                      onClick={handleCopyPix}
+                      className="inline-flex items-center gap-1.5 bg-brand-green text-white text-xs px-4 py-2 rounded-xl font-bold cursor-pointer hover:bg-brand-darkgreen"
                     >
-                      {isProcessing ? (
-                        <span className="flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Processando com a operadora...
-                        </span>
-                      ) : (
-                        <span>Pagar Simulado (R$ {totalPrice.toFixed(2).replace('.', ',')})</span>
-                      )}
+                      <Clipboard className="w-3.5 h-3.5" />
+                      {copiedPix ? "Código Copiado!" : "Copiar Código Copia e Cola"}
                     </button>
-                    <p className="text-[10px] text-amber-900/50 mt-1.5 text-center">
-                      Mockup de teste: Não serão feitas cobranças reais. Qualquer dado preenchido servirá para liberar a simulação de download do guia.
-                    </p>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* STEP 3: SUCCESS STATE / DIGITAL DELIVERY */}
-          {step === 3 && (
-            <div className="text-center space-y-6 py-4">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-700 animate-pulse-subtle">
-                <Check className="w-8 h-8 stroke-[3]" />
-              </div>
-              <div className="space-y-2">
-                <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase tracking-widest">
-                  Parabéns! Pagamento Aprovado
-                </span>
-                <h4 className="font-serif text-[#2c1d11] font-bold text-2xl md:text-3xl">
-                  O Seu Acesso Está Liberado!
-                </h4>
-                <p className="text-sm text-amber-950/70 max-w-sm mx-auto">
-                  Olá, <strong className="text-amber-950">{name || 'Padeiro(a)'}</strong>! Enviamos uma cópia para <strong className="text-amber-950">{email}</strong>, mas você já pode baixar os seus materiais digitais de alta conversão agora mesmo:
-                </p>
-              </div>
-
-              {/* Download Assets Box */}
-              <div className="bg-white rounded-xl p-4 border border-[#ece3d4] shadow-xs divide-y divide-[#ece3d4]/50 max-w-sm mx-auto">
-                <div className="py-3 flex items-center justify-between gap-3 text-left">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 bg-amber-100 text-amber-900 rounded-lg">
-                      <FileText className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-amber-950">Guia Prático da Máquina de Pão</p>
-                      <p className="text-[10px] text-amber-900/50">Arquivo PDF - Completo (48 págs.)</p>
-                    </div>
-                  </div>
-                  <a
-                    href="#"
-                    onClick={(e) => { e.preventDefault(); alert('Simulação: Download do PDF principal iniciado!'); }}
-                    className="p-2 bg-[#1e4620] hover:bg-emerald-800 text-white rounded-lg transition"
-                    title="Baixar Guia"
-                    id="download-guide-btn"
-                  >
-                    <Download className="w-4 h-4" />
-                  </a>
-                </div>
-
-                {selectedTier === 'complete' && (
-                  <>
-                    <div className="py-3 flex items-center justify-between gap-3 text-left">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-2 bg-emerald-100 text-emerald-950 rounded-lg">
-                          <Sparkles className="w-5 h-5 text-emerald-700" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-amber-950">Manual do Pão Macio por 5 Dias</p>
-                          <p className="text-[10px] text-amber-900/50">Arquivo PDF - Combo Premium</p>
-                        </div>
-                      </div>
-                      <a
-                        href="#"
-                        onClick={(e) => { e.preventDefault(); alert('Simulação: Download do Manual do Pão Macio por 5 Dias iniciado!'); }}
-                        className="p-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg transition"
-                        title="Baixar Manual Conservação"
-                        id="download-macio-btn"
-                      >
-                        <Download className="w-4 h-4" />
-                      </a>
-                    </div>
-
-                    <div className="py-3 flex items-center justify-between gap-3 text-left">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-2 bg-[#FAF7F2] text-amber-950 rounded-lg border border-[#ece3d4]">
-                          <FileText className="w-5 h-5 text-amber-800" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-amber-950">Tabela de Tempos e Ciclos</p>
-                          <p className="text-[10px] text-amber-900/50">Tabela de Consulta de Marcas</p>
-                        </div>
-                      </div>
-                      <a
-                        href="#"
-                        onClick={(e) => { e.preventDefault(); alert('Simulação: Download da Tabela de Tempos e Ciclos iniciado!'); }}
-                        className="p-2 bg-[#1e4620] hover:bg-emerald-800 text-white rounded-lg transition"
-                        title="Baixar Tabela de Ciclos"
-                        id="download-ciclos-btn"
-                      >
-                        <Download className="w-4 h-4" />
-                      </a>
-                    </div>
-                  </>
                 )}
 
-                {selectedTier === 'basic' && hasOrderBump && (
-                  <div className="py-3 flex items-center justify-between gap-3 text-left">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-orange-100 text-orange-900 rounded-lg">
-                        <Sparkles className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-amber-950">Manual de Geleias e Patês</p>
-                        <p className="text-[10px] text-amber-900/50">Arquivo PDF - Bônus Adicionado</p>
-                      </div>
-                    </div>
+                {/* Submit button */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-brand-green hover:bg-brand-darkgreen disabled:bg-neutral-300 text-white font-bold py-4 px-6 rounded-xl text-sm transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Processando compra segura...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>FINALIZAR PAGAMENTO AGORA</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Footer seal */}
+                <div className="flex items-center justify-center gap-2 text-center text-[10px] text-brand-text/50 pt-2 border-t border-brand-text/5">
+                  <Lock className="w-3 h-3 text-brand-gold" />
+                  <span>Seus dados pessoais e financeiros estão totalmente protegidos por criptografia SSL de 256 bits.</span>
+                </div>
+              </form>
+            ) : (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-center py-6 space-y-6"
+              >
+                <div className="w-16 h-16 bg-brand-green/10 text-brand-green rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1 bg-brand-gold/20 text-brand-gold px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <Sparkles className="w-3 h-3 animate-spin" />
+                    Pagamento Aprovado
+                  </div>
+                  <h4 className="font-title font-bold text-2xl text-brand-text">Bem-vinda à Mesa Sem Glúten! 🎉</h4>
+                  <p className="text-xs text-brand-text/70 max-w-sm mx-auto">
+                    Agradecemos sua confiança! O e-mail de confirmação com seus dados de acesso vitalício foi enviado para <strong className="text-brand-green">{email}</strong>.
+                  </p>
+                </div>
+
+                {/* Simulated Download Resources Container */}
+                <div className="bg-brand-bg p-4 rounded-2xl border border-brand-green/10 text-left space-y-3">
+                  <p className="text-xs font-bold text-brand-text/80 uppercase tracking-widest">Seus materiais para Download imediato:</p>
+                  
+                  <div className="space-y-2">
                     <a
                       href="#"
-                      onClick={(e) => { e.preventDefault(); alert('Simulação: Download do bônus de Geleias e Patês iniciado!'); }}
-                      className="p-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg transition"
-                      title="Baixar Bônus"
-                      id="download-bonus-btn"
+                      onClick={(e) => e.preventDefault()}
+                      className="p-3 bg-white rounded-xl border border-brand-text/5 flex items-center justify-between text-xs hover:border-brand-green transition-colors cursor-pointer group"
                     >
-                      <Download className="w-4 h-4" />
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">📖</span>
+                        <div>
+                          <p className="font-bold text-brand-text">Método Mesa Sem Glúten (E-book principal)</p>
+                          <p className="text-[10px] text-brand-text/50">PDF Completo • +120 Receitas</p>
+                        </div>
+                      </div>
+                      <span className="text-brand-green font-bold group-hover:translate-x-0.5 transition-transform">Baixar ➜</span>
                     </a>
+
+                    {planName.includes("Completo") && (
+                      <>
+                        <a
+                          href="#"
+                          onClick={(e) => e.preventDefault()}
+                          className="p-3 bg-white rounded-xl border border-brand-text/5 flex items-center justify-between text-xs hover:border-brand-green transition-colors cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">📅</span>
+                            <div>
+                              <p className="font-bold text-brand-text">Cardápio Inteligente 30 Dias</p>
+                              <p className="text-[10px] text-brand-text/50">PDF Estruturado com lista de compras</p>
+                            </div>
+                          </div>
+                          <span className="text-brand-green font-bold group-hover:translate-x-0.5 transition-transform">Baixar ➜</span>
+                        </a>
+
+                        <a
+                          href="#"
+                          onClick={(e) => e.preventDefault()}
+                          className="p-3 bg-white rounded-xl border border-brand-text/5 flex items-center justify-between text-xs hover:border-brand-green transition-colors cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">🌾</span>
+                            <div>
+                              <p className="font-bold text-brand-text">Manual Completo de Substituições & Farinhas</p>
+                              <p className="text-[10px] text-brand-text/50">Guia de pesos, equivalências e congelamento</p>
+                            </div>
+                          </div>
+                          <span className="text-brand-green font-bold group-hover:translate-x-0.5 transition-transform">Baixar ➜</span>
+                        </a>
+                      </>
+                    )}
                   </div>
-                )}
-              </div>
+                </div>
 
-              <div className="pt-2 text-xs text-amber-900/50 max-w-xs mx-auto flex items-center justify-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                Garantia incondicional de 7 dias mantida com sucesso.
-              </div>
-
-              <div className="pt-2">
-                <button
-                  onClick={onClose}
-                  className="px-6 py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold rounded-lg text-xs transition cursor-pointer"
-                  id="checkout-close-success-btn"
-                >
-                  Voltar para a página de vendas
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Secure Footer badges */}
-          {step !== 3 && (
-            <div className="bg-amber-500/5 rounded-xl p-4 border border-amber-600/10 flex items-center justify-around gap-4 text-[10px] font-semibold text-amber-900/60 text-center">
-              <div className="flex flex-col items-center gap-1">
-                <ShieldCheck className="w-5 h-5 text-[#1e4620]" />
-                <span>Garantia de 7 Dias</span>
-              </div>
-              <div className="w-px h-8 bg-amber-900/10" />
-              <div className="flex flex-col items-center gap-1">
-                <Lock className="w-5 h-5 text-[#1e4620]" />
-                <span>Privacidade Segura</span>
-              </div>
-              <div className="w-px h-8 bg-amber-900/10" />
-              <div className="flex flex-col items-center gap-1">
-                <Sparkles className="w-5 h-5 text-[#1e4620]" />
-                <span>Acesso Imediato</span>
-              </div>
-            </div>
-          )}
-
+                <div className="pt-4">
+                  <button
+                    onClick={onClose}
+                    className="w-full bg-[#EAE3D2] hover:bg-brand-green hover:text-white text-brand-text font-bold py-3.5 px-6 rounded-xl text-sm transition-all duration-300 cursor-pointer"
+                  >
+                    FECHAR E VOLTAR À PÁGINA
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
