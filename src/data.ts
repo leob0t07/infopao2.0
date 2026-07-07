@@ -1,4 +1,6 @@
 import { WeekDayItem, MenuItem, TestimonialItem, FaqItem, FeatureCardItem } from "./types";
+import glutenFreePastaImage from "./assets/images/gluten_free_pasta_dinner_1783449502641.jpg";
+import glutenFreeFocacciaImage from "./assets/images/gluten_free_focaccia_dinner_1783446768165.jpg";
 
 export const WEEK_DAYS: WeekDayItem[] = [
   {
@@ -27,7 +29,7 @@ export const WEEK_DAYS: WeekDayItem[] = [
     tag: "Jantar Prático",
     title: "Jantar leve",
     description: "Um quiche aromático com massa crocante (Pâte Brisée) ou um wrap macio que enrola sem quebrar.",
-    imageUrl: "/images/gluten_free_pasta_dinner_1783449502641.jpg"
+    imageUrl: glutenFreePastaImage
   }
 ];
 
@@ -78,7 +80,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "Jantar",
     icon: "Moon",
     title: "Wraps Leves, Sopas & Receitas Rápidas",
-    imageUrl: "/images/gluten_free_focaccia_dinner_1783446768165.jpg",
+    imageUrl: glutenFreeFocacciaImage,
     items: [
       "Wraps flexíveis (não quebram)",
       "Galette rústica de legumes",

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { AlertCircle, Trash2, ArrowRight, Ban, XCircle } from "lucide-react";
+import staleBreadImage from "../assets/images/stale_bread_hammer_1783434692822.jpg";
 
 export default function ChallengeSection() {
   return (
@@ -19,7 +20,7 @@ export default function ChallengeSection() {
           >
             <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-square rounded-3xl overflow-hidden shadow-xl border border-brand-text/5 bg-neutral-100">
               <img
-                src="/images/stale_bread_hammer_1783434692822.jpg"
+                src={staleBreadImage}
                 alt="Pão duro como pedra com martelo"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover grayscale-[10%] contrast-[105%]"
