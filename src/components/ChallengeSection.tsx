@@ -19,7 +19,7 @@ export default function ChallengeSection() {
           >
             <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-square rounded-3xl overflow-hidden shadow-xl border border-brand-text/5 bg-neutral-100">
               <img
-                src="/src/assets/images/stale_bread_hammer_1783434692822.jpg"
+                src="/images/stale_bread_hammer_1783434692822.jpg"
                 alt="Pão duro como pedra com martelo"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover grayscale-[10%] contrast-[105%]"

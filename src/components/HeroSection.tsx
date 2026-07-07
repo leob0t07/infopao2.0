@@ -45,7 +45,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
             className="relative aspect-video sm:aspect-[21/9] lg:aspect-[16/7] w-full rounded-2xl overflow-hidden shadow-lg border border-brand-green/10"
           >
             <img
-              src="/src/assets/images/gluten_free_cheese_pull_1783445313365.jpg"
+              src="/images/gluten_free_cheese_pull_1783445313365.jpg"
               alt="Pão de queijo quentinho com queijo derretido e frango desfiado"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover transform hover:scale-102 transition-transform duration-500"

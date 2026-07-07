@@ -61,7 +61,7 @@ export default function FamilySection() {
         >
           <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-brand-bg bg-neutral-100">
             <img
-              src="/src/assets/images/family_eating_gluten_free_pizza_1783446056549.jpg"
+              src="/images/family_eating_gluten_free_pizza_1783446056549.jpg"
               alt="Família brasileira reunida comendo pizza sem glúten"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover"

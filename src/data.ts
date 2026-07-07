@@ -27,7 +27,7 @@ export const WEEK_DAYS: WeekDayItem[] = [
     tag: "Jantar Prático",
     title: "Jantar leve",
     description: "Um quiche aromático com massa crocante (Pâte Brisée) ou um wrap macio que enrola sem quebrar.",
-    imageUrl: "/src/assets/images/gluten_free_pasta_dinner_1783449502641.jpg"
+    imageUrl: "/images/gluten_free_pasta_dinner_1783449502641.jpg"
   }
 ];
 
@@ -78,7 +78,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "Jantar",
     icon: "Moon",
     title: "Wraps Leves, Sopas & Receitas Rápidas",
-    imageUrl: "/src/assets/images/gluten_free_focaccia_dinner_1783446768165.jpg",
+    imageUrl: "/images/gluten_free_focaccia_dinner_1783446768165.jpg",
     items: [
       "Wraps flexíveis (não quebram)",
       "Galette rústica de legumes",
